@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">RiTimeLog</string>
+
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_menu">RiTimeLog</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="pincode">Pincode</string>
+    <string name="oecode">OE Code</string>
+    <string name="site_name">Site Name</string>
+    <string name="site_code">Site Code</string>
+</resources>

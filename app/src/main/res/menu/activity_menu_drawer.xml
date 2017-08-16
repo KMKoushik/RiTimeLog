@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/attendance_register"
+            android:icon="@drawable/ic_assignment_black"
+            android:title="Attendance Register" />
+        <item
+            android:id="@+id/site_details"
+            android:icon="@mipmap/ic_work_black"
+            android:title="Site Details" />
+        <item
+            android:id="@+id/employee_list"
+            android:icon="@mipmap/ic_list_black"
+            android:title="Employee List" />
+        <item
+            android:id="@+id/sync"
+            android:icon="@mipmap/ic_sync_black"
+            android:title="Sync" />
+        <item
+            android:id="@+id/enquiry"
+            android:icon="@mipmap/ic_enquiry_black"
+            android:title="Time Register Enquiry" />
+        <item
+            android:id="@+id/mylocation"
+            android:icon="@mipmap/ic_location_black"
+            android:title="My Location" />
+        <item
+            android:id="@+id/nav_exit"
+            android:icon="@mipmap/ic_exit_black"
+            android:title="Exit" />
+    </group>
+</menu>
