@@ -1,8 +1,14 @@
 package com.riact.ritimelog;
 
+import android.Manifest;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,8 +19,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.riact.ritimelog.utils.GPSTracker;
+
 public class MenuActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    GPSTracker gps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,14 +33,10 @@ public class MenuActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
+
+        android.app.FragmentManager fm=getFragmentManager();
+        fm.beginTransaction().replace(R.id.content_menu,new AttendanceRegister()).commit();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -39,6 +45,8 @@ public class MenuActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.getMenu().getItem(0).setChecked(true);
+
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -84,6 +92,8 @@ public class MenuActivity extends AppCompatActivity
 
         if (id == R.id.attendance_register) {
             // Handle the camera action
+            fm.beginTransaction().replace(R.id.content_menu,new AttendanceRegister()).commit();
+
         } else if (id == R.id.site_details) {
             fm.beginTransaction().replace(R.id.content_menu,new SiteDetails()).commit();
 
@@ -94,12 +104,86 @@ public class MenuActivity extends AppCompatActivity
 
         } else if (id == R.id.enquiry) {
 
-        } else if (id == R.id.nav_exit) {
+        } else if(id == R.id.mylocation)
+        {
+            showLocation();
+        }
+        else if (id == R.id.nav_exit) {
+            final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setTitle("Warning");
+            alert.setMessage("Do you want to exit?");
+            alert.setPositiveButton("OK", new DialogInterface.OnClickListener()
+            {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    System.exit(1);
+                }
+            });
+            alert.setNegativeButton("Cancel",new DialogInterface.OnClickListener()
+            {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+
+                }
+            });
+
+            alert.show();
 
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void showLocation() {
+        gps = new GPSTracker(MenuActivity.this);
+        if (gps.canGetLocation()) {
+            double deviceLatitude = gps.getLatitude();
+            double deviceLongitude = gps.getLongitude();
+            showAllert("Current Location is - \nLatitude : " + deviceLatitude + "\nLongitude: " + deviceLongitude);
+        } else {
+            gps.showSettingsAlert();
+        }
+    }
+
+    private void showAllert(String succesMessage) {
+        new AlertDialog.Builder(MenuActivity.this)
+                .setMessage(succesMessage)
+                .setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.i("", "onClick: ");
+                    }
+                })
+                .show();
+    }
+
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
+    public boolean checkLocationPermission()
+    {
+        String permission = "android.permission.ACCESS_FINE_LOCATION";
+        int res = this.checkCallingOrSelfPermission(permission);
+        return (res == PackageManager.PERMISSION_GRANTED);
     }
 }
