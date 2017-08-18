@@ -120,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 db.addEmployeeDetails(siteCodeTxt,response);
                 db.deleteCurrentSite();
                 db.addCurrentSite(siteCodeTxt);
+                Constants.currentSite=ModelUtil.getSite(db.getCurrentSite().get(0).toString());
                 Intent intent = new Intent(getApplicationContext(), MenuActivity.class);
                 startActivity(intent);
                 finish();

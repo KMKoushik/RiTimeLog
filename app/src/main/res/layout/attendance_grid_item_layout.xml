@@ -18,6 +18,7 @@
         android:orientation="vertical"
         android:padding="10dp"
         android:layout_gravity="center">
+
         <TextView
             android:id="@+id/emp_code"
             android:layout_width="match_parent"

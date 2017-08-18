@@ -23,4 +23,9 @@ public class EmployeeModel {
     public String getEmp_code(){
         return this.emp_code;
     }
+
+    public String getEmp_secret_code()
+    {
+        return this.emp_secret_code;
+    }
 }

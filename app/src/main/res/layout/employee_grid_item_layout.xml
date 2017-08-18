@@ -14,10 +14,15 @@
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="10dp"
         android:layout_gravity="center">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/carview">
         <TextView
             android:id="@+id/emp_code"
             android:layout_width="match_parent"
@@ -36,6 +41,7 @@
         android:layout_below="@+id/emp_code"
         android:layout_marginTop="5dp"
         />
+        </LinearLayout>
 
 </RelativeLayout>
     </android.support.v7.widget.CardView>
