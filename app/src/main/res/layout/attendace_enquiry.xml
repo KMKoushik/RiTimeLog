@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/siteCodeText"
+            android:layout_width="match_parent"
+            android:layout_height="21dp"
+            android:gravity="center"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@android:color/black"
+           />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="10dp"
+            android:text="Start Date"
+            android:textColor="@android:color/black"
+           />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:id="@+id/startDateLayout"
+
+            >
+
+        <TextView
+            android:id="@+id/startDatePickerText"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="10dp"
+            android:hint="select start date" />
+
+            <ImageView
+
+                android:layout_height="20dp"
+                android:layout_width="20dp"
+                android:background="@drawable/ic_calandar"
+                android:layout_marginTop="13dp"
+                />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="20dp"
+            android:text="End Date"
+            android:textColor="@android:color/black"
+
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:id="@+id/endDateLayout"
+
+            >
+
+        <TextView
+            android:id="@+id/endDatePickerText"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="10dp"
+            android:hint="select end date" />
+
+            <ImageView
+
+                android:layout_height="20dp"
+                android:layout_width="20dp"
+                android:background="@drawable/ic_calandar"
+                android:layout_marginTop="13dp"
+                />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/search_btn"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="10dp"
+            android:text="search"
+            android:textColor="#ffffff"
+            android:background="@drawable/roundedbutton"
+            />
+
+        <!--<ListView-->
+        <!--android:id="@+id/list_attendance"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginLeft="5dp"-->
+        <!--android:layout_marginRight="5dp"-->
+        <!--android:layout_marginTop="10dp"-->
+        <!--android:divider="@null" />-->
+        <GridView
+            android:id="@+id/enquiry_grid"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:columnWidth="150dp"
+            android:gravity="center"
+            android:numColumns="auto_fit"
+            android:stretchMode="columnWidth" />
+        <!---->
+
+    </android.support.v7.widget.LinearLayoutCompat>
+    </RelativeLayout>

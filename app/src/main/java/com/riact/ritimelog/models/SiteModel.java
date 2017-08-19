@@ -32,14 +32,25 @@ public class SiteModel {
     {
         return this.site_pincode;
     }
+
     public String getOECode()
     {
         return this.oe_code;
     }
+
     public String getOEPassword()
     {
         return this.oe_password;
     }
+
     public String getSiteName() {return this.site_desc;}
+
+    public double getSiteLatitude(){ return this.site_latitude;}
+
+    public double getSiteLongitude(){ return this.site_longitude;}
+
+    public double getTollerance(){ return this.tollerance;}
+
+
 
 }

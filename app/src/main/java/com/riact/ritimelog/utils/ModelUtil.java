@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by koushik on 13/8/17.
@@ -82,5 +83,30 @@ public class ModelUtil {
             }
         }
         return siteModel;
+    }
+
+    public static EmployeeModel getEmployeeFromCode(String empCode)
+    {
+        EmployeeModel employeeModel=null;
+        for (EmployeeModel employeeModel1:Constants.employeeList)
+        {
+            if(employeeModel1.getEmp_code().equals(empCode))
+            {
+                employeeModel = employeeModel1;
+            }
+        }
+
+        return employeeModel;
+    }
+
+    public static ArrayList<EmployeeModel> getEmployeeListFromEmpCode(List<String> list)
+    {
+        ArrayList<EmployeeModel> emplist = new ArrayList<EmployeeModel>();
+        for(String string:list)
+        {
+            emplist.add(getEmployeeFromCode(string));
+        }
+
+        return emplist;
     }
 }

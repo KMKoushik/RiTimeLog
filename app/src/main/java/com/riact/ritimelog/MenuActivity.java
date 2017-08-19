@@ -1,7 +1,9 @@
 package com.riact.ritimelog;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -18,13 +20,34 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.StringRequest;
+import com.hyttetech.library.utils.AppSingleton;
+import com.hyttetech.library.utils.NetworkUtil;
+import com.riact.ritimelog.utils.DbHandler;
 import com.riact.ritimelog.utils.GPSTracker;
+
+import org.w3c.dom.Text;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import static com.android.volley.VolleyLog.TAG;
 
 public class MenuActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     GPSTracker gps;
+    DbHandler db;
+    int syncFlag = 1;
+    ArrayList<List<String>> toSyncList= new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +55,7 @@ public class MenuActivity extends AppCompatActivity
         setContentView(R.layout.activity_menu);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        db= new DbHandler(getApplicationContext());
 
 
 
@@ -102,11 +126,100 @@ public class MenuActivity extends AppCompatActivity
 
         } else if (id == R.id.sync) {
 
+            toSyncList = db.getAllToSyncData();
+
+            ArrayList<String> empList = (ArrayList<String>) toSyncList.get(0);
+            ArrayList<String> timeList = (ArrayList<String>) toSyncList.get(1);
+            ArrayList<String> urlList = (ArrayList<String>) toSyncList.get(2);
+            int length = empList.size();
+
+
+
+            if(NetworkUtil.isConnectedToInternet(this)) {
+                if (!empList.isEmpty()) {
+                    Toast.makeText(getApplicationContext(),"Sync Started",Toast.LENGTH_SHORT).show();
+
+                    for (int i = 0; i < length; i++) {
+                        final String empCode = empList.get(0);
+                        final String time = timeList.get(0);
+                        String url = urlList.get(0);
+                        String REQUEST_TAG = "com.androidtutorialpoint.volleyStringRequest";
+
+
+                        StringRequest strReq = new StringRequest(url, new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+
+                                db.addSyncedDetails(empCode, new Long(time));
+
+
+                            }
+                        }, new Response.ErrorListener() {
+
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                                syncFlag = 0;
+                            }
+                        });
+                        // Adding String request to request queue
+                        AppSingleton.getInstance(this).addToRequestQueue(strReq, REQUEST_TAG);
+
+                    }
+                    if(syncFlag == 0)
+                    {
+                        Toast.makeText(getApplicationContext(),"Sync Failed",Toast.LENGTH_SHORT).show();
+
+                    }
+                    else{
+                        Toast.makeText(getApplicationContext(),"Sync Success",Toast.LENGTH_SHORT).show();
+                        db.deleteToSyncedEmpDetails();
+
+                    }
+                }
+            }
+            else {
+                Toast.makeText(getApplicationContext(),"Internet Connection not available",Toast.LENGTH_LONG).show();
+            }
+
         } else if (id == R.id.enquiry) {
+            fm.beginTransaction().replace(R.id.content_menu,new AttendanceEnquiry()).commit();
 
         } else if(id == R.id.mylocation)
         {
             showLocation();
+        }
+        else if(id == R.id.logout)
+        {
+            final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setTitle("Warning");
+            alert.setMessage("All saved data will be deleted. Do you want to Logout?");
+            alert.setPositiveButton("OK", new DialogInterface.OnClickListener()
+            {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    db.deleteCurrentSite();
+                    db.deleteSyncedEmpDetails();
+                    db.deleteToSyncedEmpDetails();
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            });
+            alert.setNegativeButton("Cancel",new DialogInterface.OnClickListener()
+            {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+
+                }
+            });
+
+            alert.show();
+
         }
         else if (id == R.id.nav_exit) {
             final AlertDialog.Builder alert = new AlertDialog.Builder(this);

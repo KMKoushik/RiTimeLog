@@ -133,9 +133,23 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
-                resp="Failed to Register";
+                resp="Failed to Login";
                 progressDialog.hide();
-                Toast.makeText(getApplicationContext(),resp,Toast.LENGTH_LONG).show();
+                List<String> employeeData=db.getEmployeeDtails(siteCodeTxt);
+                if(!employeeData.isEmpty())
+                {
+                    try {
+                        Constants.employeeList=ModelUtil.getEmployeeList(new JSONArray(employeeData.get(0)));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Intent intent = new Intent(getApplicationContext(), MenuActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), resp, Toast.LENGTH_LONG).show();
+                }
 
 
             }

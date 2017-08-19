@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.TextView;
 
+import com.riact.ritimelog.adapter.EmployeeListAdapter;
 import com.riact.ritimelog.utils.Constants;
 
 /**
@@ -21,7 +22,7 @@ public class EmployeeList extends Fragment {
     TextView noEmployeeLable;
 
 
-    private static EmployeeGridAdapter adapter;
+    private static EmployeeListAdapter adapter;
 
     TextView siteName,siteCode,pinCode,oeCode;
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -29,7 +30,7 @@ public class EmployeeList extends Fragment {
         myView= inflater.inflate(R.layout.employee_list,container,false);
         noEmployeeLable = (TextView) myView.findViewById(R.id.noEmployeeLable);
         gridView = (GridView) myView.findViewById(R.id.grid);
-        adapter = new EmployeeGridAdapter(Constants.employeeList, myView.getContext());
+        adapter = new EmployeeListAdapter(Constants.employeeList, myView.getContext());
         gridView.setAdapter(adapter);
 
         gridView.setVisibility(View.VISIBLE);

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+<LinearLayout
+     android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/popup"
+    android:background="@color/background"
+    android:layout_gravity="center"
+
+
+    >
+
+    <DatePicker
+        android:id="@+id/datePicker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        >
+
+        <Button
+            android:id="@+id/cancel"
+            android:layout_width="115dp"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="20dp"
+
+            android:layout_alignParentStart="true"
+            android:layout_alignTop="@+id/set"
+            android:background="@drawable/roundedbutton"
+            android:text="cancel"
+            android:textColor="#ffffff" />
+
+        <Button
+            android:id="@+id/set"
+            android:layout_width="115dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+
+            android:background="@drawable/roundedbutton"
+            android:text="set"
+            android:textColor="#ffffff" />
+    </RelativeLayout>
+</LinearLayout>
+</ScrollView>
