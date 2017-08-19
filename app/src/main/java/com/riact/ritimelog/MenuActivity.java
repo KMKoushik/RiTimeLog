@@ -175,7 +175,11 @@ public class MenuActivity extends AppCompatActivity
                         Toast.makeText(getApplicationContext(),"Sync Success",Toast.LENGTH_SHORT).show();
                         db.deleteToSyncedEmpDetails();
 
+
                     }
+                }
+                else {
+                    Toast.makeText(getApplicationContext(),"Nothing to sync",Toast.LENGTH_SHORT).show();
                 }
             }
             else {
