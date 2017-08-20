@@ -11,8 +11,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,10 +29,12 @@ import com.riact.ritimelog.models.EmployeeModel;
 import com.riact.ritimelog.utils.Constants;
 import com.riact.ritimelog.utils.DbHandler;
 import com.riact.ritimelog.utils.GPSTracker;
+import com.riact.ritimelog.utils.ModelUtil;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import static com.android.volley.VolleyLog.TAG;
 
@@ -42,11 +46,14 @@ public class AttendanceRegister extends Fragment {
 
     View myView;
     GridView gridView;
-    TextView noEmployeeLable;
+    TextView noEmployeeLable,empCode,empName;
     DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
     GPSTracker gps;
     DbHandler db;
+    EditText secretCode;
+    LinearLayout layout;
+    Button submitBtn,cancelBtn;
 
 
 
@@ -60,36 +67,47 @@ public class AttendanceRegister extends Fragment {
         siteCode = (TextView) myView.findViewById(R.id.site_code);
         siteName = (TextView) myView.findViewById(R.id.site_desc);
         gridView = (GridView) myView.findViewById(R.id.grid);
-        adapter = new EmployeeGridAdapter(Constants.employeeList, myView.getContext());
-        gridView.setAdapter(adapter);
+        secretCode = (EditText) myView.findViewById(R.id.secret_field);
+        layout = (LinearLayout) myView.findViewById(R.id.register_field);
         siteCode.setText("Site Code : "+Constants.currentSite.getSiteCode());
         siteName.setText("Site Name : "+Constants.currentSite.getSiteName());
+        empCode = (TextView) myView.findViewById(R.id.emp_code_attendace);
+        empName = (TextView) myView.findViewById(R.id.emp_name_attendance);
+        empCode.setText("Employee Code : "+Constants.currentSite.getSiteCode());
+        empName.setText("Employee Name : "+Constants.currentSite.getSiteName());
         db = new DbHandler(getActivity());
 
         gridView.setVisibility(View.VISIBLE);
         noEmployeeLable.setVisibility(View.GONE);
+        adapter = new EmployeeGridAdapter(Constants.employeeList, myView.getContext(),myView);
+        gridView.setAdapter(adapter);
+
+
+
 
 
         return myView;
     }
 
-    public  void showAttendanceDialog(final int position, final Context context)
+    public  void showAttendanceDialog(final int position, final Context context, final View myView)
     {
-
-        AlertDialog.Builder alert = new AlertDialog.Builder(context);
-        final EditText edittext = new EditText(context);
-        alert.setTitle("Authentication Required");
-        edittext.setInputType(InputType.TYPE_CLASS_TEXT |
-                InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        edittext.setHint("Secret Code");
-        edittext.setWidth(50);
-        alert.setView(edittext);
         final EmployeeModel currentEmployee = Constants.employeeList.get(position);
+        gridView = (GridView) myView.findViewById(R.id.grid);
+        secretCode = (EditText) myView.findViewById(R.id.secret_field);
+        layout = (LinearLayout) myView.findViewById(R.id.register_field);
+        empCode = (TextView) myView.findViewById(R.id.emp_code_attendace);
+        empName = (TextView) myView.findViewById(R.id.emp_name_attendance);
+        submitBtn = (Button) myView.findViewById(R.id.submit_register);
+        cancelBtn = (Button) myView.findViewById(R.id.cancel_register);
+        empCode.setText("Employee Code : "+currentEmployee.getEmp_code());
+        empName.setText("Employee Name : "+currentEmployee.getEmp_name());
+        secretCode.setText("");
 
-        alert.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                String enteredvalue = edittext.getText().toString();
-                if (enteredvalue.equals(Constants.employeeList.get(position).getEmp_secret_code())) {
+        submitBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String secretCodeTxt = secretCode.getText().toString();
+                if (secretCodeTxt.equals(Constants.employeeList.get(position).getEmp_secret_code())) {
                     gps = new GPSTracker(context);
                     if (gps.canGetLocation()) {
                         double deviceLatitude = gps.getLatitude();
@@ -98,12 +116,14 @@ public class AttendanceRegister extends Fragment {
                         double siteLatitude = Constants.currentSite.getSiteLatitude();
                         double siteLongitude = Constants.currentSite.getSiteLongitude();
                         double tollerance;
-                        tollerance = Constants.currentSite.getTollerance()*0.000621371192;
+                        tollerance = Constants.currentSite.getTollerance()*0.00621371192;
                         //0.0063 is 10 m
                         if (distance(siteLatitude, siteLongitude, deviceLatitude, deviceLongitude) < tollerance ) {
                             Date date = new Date();
                             String url = Constants.WEB_ADDRESS+"submit_registration.php?site_code="+Constants.currentSite.getSiteCode()+"&emp_code="+currentEmployee.getEmp_code()+"&attendance_date="+dateFormat.format(date)+"&attendance_time="+timeFormat.format(date)+"&register_status_code=S";
-                            volleyStringRequst(url,context,currentEmployee);
+                            volleyStringRequst(url,context,currentEmployee,myView);
+
+                            layout.setVisibility(View.GONE);
                         } else {
 
                             DialogUtil.showToast("Invalid Location",1,context);
@@ -121,16 +141,20 @@ public class AttendanceRegister extends Fragment {
             }
         });
 
-        alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gridView.setVisibility(View.VISIBLE);
+                layout.setVisibility(View.GONE);
             }
         });
 
-        alert.show();
+        gridView.setVisibility(View.GONE);
+        layout.setVisibility(View.VISIBLE);
+
     }
 
-    public void  volleyStringRequst(final String url, final Context context, final EmployeeModel employeeModel){
+    public void  volleyStringRequst(final String url, final Context context, final EmployeeModel employeeModel, final View myView){
         try {
 
 
@@ -149,6 +173,9 @@ public class AttendanceRegister extends Fragment {
                     Toast.makeText(context, response, Toast.LENGTH_LONG).show();
                     db = new DbHandler(context);
                     db.addSyncedDetails(employeeModel.getEmp_code(),System.currentTimeMillis());
+                    updateAttenanceDetails(context);
+
+                    updateGridView(myView);
 
 
                 }
@@ -160,6 +187,7 @@ public class AttendanceRegister extends Fragment {
                     progressDialog.hide();
                     db = new DbHandler(context);
                     db.addToSyncData(employeeModel.getEmp_code(),System.currentTimeMillis(),url);
+                    updateGridView(myView);
 
                     Toast.makeText(context, "Failed to Register, Sync later", Toast.LENGTH_LONG).show();
 
@@ -195,5 +223,43 @@ public class AttendanceRegister extends Fragment {
         double dist = earthRadius * c;
         Log.i("location", "distance: "+dist);
         return dist; // output distance, in MILES
+    }
+
+    public void updateAttenanceDetails(Context context)
+    {
+        String startDateTxt,endateTxt;
+        DateFormat currentDate =  new SimpleDateFormat("yyyy/MM/dd");
+        Date startDate = new Date();
+        Date endDate = new Date();
+        startDateTxt = currentDate.format(startDate)+" 00:00:00";
+        endateTxt = currentDate.format(endDate)+ " 23:59:59";
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+        try{
+
+            startDate = dateFormat.parse(startDateTxt);
+            endDate = dateFormat.parse(endateTxt);
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        db = new DbHandler(context);
+
+
+        List<List> attendanceList=db.getSyncedEmpDetails(startDate.getTime(),endDate.getTime());
+        ModelUtil.setEmployeeListFromEmpCode(attendanceList.get(0));
+
+    }
+
+    public void updateGridView(View myView)
+    {
+        gridView = (GridView) myView.findViewById(R.id.grid);
+        adapter = new EmployeeGridAdapter(Constants.employeeList, myView.getContext(),myView);
+        gridView.setAdapter(adapter);
+        gridView.setVisibility(View.VISIBLE);
+
+
+
     }
 }

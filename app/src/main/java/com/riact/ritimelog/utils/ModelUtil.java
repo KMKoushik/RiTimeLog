@@ -65,7 +65,7 @@ public class ModelUtil {
             String empName = employee.getString(Constants.KEY_EMP_NAME);
             String empSecretCode = employee.getString(Constants.KEY_SECRET_CODE);
             String registrationMode = employee.getString(Constants.KEY_EMP_REGISTER_MODE);
-            employeeList.add(new EmployeeModel(empCode,empName,empSecretCode,registrationMode));
+            employeeList.add(new EmployeeModel(empCode,empName,empSecretCode,registrationMode,false));
 
         }
         return employeeList;
@@ -108,5 +108,27 @@ public class ModelUtil {
         }
 
         return emplist;
+    }
+
+    public static void setEmployeeListFromEmpCode(List<String> list)
+    {
+        for(String string:list)
+        {
+            putEmployeeFromCode(string);
+
+        }
+
+    }
+
+    public static void putEmployeeFromCode(String empCode)
+    {
+        for (EmployeeModel employeeModel1:Constants.employeeList)
+        {
+            if(employeeModel1.getEmp_code().equals(empCode))
+            {
+                employeeModel1.putAttendance(true);
+            }
+        }
+
     }
 }

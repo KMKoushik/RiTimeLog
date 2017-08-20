@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -27,6 +28,9 @@ import com.riact.ritimelog.utils.ModelUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import static com.android.volley.VolleyLog.TAG;
@@ -50,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
         OECode =  (EditText)findViewById(R.id.oe_code);
         OEPassword =  (EditText)findViewById(R.id.password);
         submitBtn = (Button)findViewById(R.id.submit);
+
+        OECode.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
+
 
         db = new DbHandler(getApplicationContext());
         List item = db.getCurrentSite();
@@ -121,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
                 db.deleteCurrentSite();
                 db.addCurrentSite(siteCodeTxt);
                 Constants.currentSite=ModelUtil.getSite(db.getCurrentSite().get(0).toString());
+                updateAttenanceDetails();
                 Intent intent = new Intent(getApplicationContext(), MenuActivity.class);
                 startActivity(intent);
                 finish();
@@ -143,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    updateAttenanceDetails();
                     Intent intent = new Intent(getApplicationContext(), MenuActivity.class);
                     startActivity(intent);
                     finish();
@@ -156,6 +165,31 @@ public class MainActivity extends AppCompatActivity {
         });
         // Adding String request to request queue
         AppSingleton.getInstance(getApplicationContext()).addToRequestQueue(strReq, REQUEST_TAG);
+
+    }
+
+    public void updateAttenanceDetails()
+    {
+        String startDateTxt,endateTxt;
+        DateFormat currentDate =  new SimpleDateFormat("yyyy/MM/dd");
+        Date startDate = new Date();
+        Date endDate = new Date();
+        startDateTxt = currentDate.format(startDate)+" 00:00:00";
+        endateTxt = currentDate.format(endDate)+ " 23:59:59";
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+        try{
+
+            startDate = dateFormat.parse(startDateTxt);
+            endDate = dateFormat.parse(endateTxt);
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        List<List> attendanceList=db.getSyncedEmpDetails(startDate.getTime(),endDate.getTime());
+        ModelUtil.setEmployeeListFromEmpCode(attendanceList.get(0));
 
     }
 

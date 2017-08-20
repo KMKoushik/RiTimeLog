@@ -5,4 +5,5 @@
     <color name="colorAccent">#2C1099</color>
     <color name="background">#add8e6</color>
     <color name="black_overlay">#66000000</color>
+    <color name="attendanceOk">#90EE90</color>
 </resources>

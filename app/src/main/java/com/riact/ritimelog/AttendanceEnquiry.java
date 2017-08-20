@@ -19,6 +19,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.hyttetech.library.utils.DialogUtil;
+import com.riact.ritimelog.adapter.EmployeeAttendanceAdapter;
 import com.riact.ritimelog.adapter.EmployeeListAdapter;
 import com.riact.ritimelog.models.EmployeeModel;
 import com.riact.ritimelog.utils.Constants;
@@ -50,7 +51,7 @@ public class AttendanceEnquiry extends Fragment {
     ArrayList<EmployeeModel> employeeList;
     LinearLayout startDateLayout,endDateLayout;
     GridView gridView;
-    private static EmployeeListAdapter adapter;
+    private static EmployeeAttendanceAdapter adapter;
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -99,7 +100,7 @@ public class AttendanceEnquiry extends Fragment {
                 }
                 attendanceList=db.getSyncedEmpDetails(startDate.getTime(),endDate.getTime());
                 employeeList = ModelUtil.getEmployeeListFromEmpCode(attendanceList.get(0));
-                adapter = new EmployeeListAdapter(employeeList, myView.getContext());
+                adapter = new EmployeeAttendanceAdapter(employeeList,(ArrayList<String>) attendanceList.get(1) ,myView.getContext());
                 gridView.setAdapter(adapter);
 
                 gridView.setVisibility(View.VISIBLE);
@@ -116,7 +117,6 @@ public class AttendanceEnquiry extends Fragment {
         context.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int popupWidth = displayMetrics.widthPixels-100;
         int popupHeight = displayMetrics.heightPixels-100;
-        System.out.println("chumma");
 
 
 
@@ -126,8 +126,23 @@ public class AttendanceEnquiry extends Fragment {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 
+
+
         final View layout = layoutInflater.inflate(R.layout.datepicker_popup, viewGroup);
         final PopupWindow popup = new PopupWindow(context);
+
+        datePicker = (DatePicker)  layout.findViewById(R.id.datePicker);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
+            // Do something for lollipop and above versions
+            datePicker.setCalendarViewShown(true);
+        } else{
+            // do something for phones running an SDK before lollipop
+            datePicker.setCalendarViewShown(false);
+            popupHeight-=450;
+
+        }
+
         popup.setContentView(layout);
         popup.setWidth(popupWidth);
         popup.setHeight(popupHeight);
@@ -139,9 +154,9 @@ public class AttendanceEnquiry extends Fragment {
         // Clear the default translucent background
 
         // Displaying the popup at the specified location, + offsets.
+
         popup.showAtLocation(layout, Gravity.CENTER_HORIZONTAL, p.x , p.y);
 
-        datePicker = (DatePicker)  layout.findViewById(R.id.datePicker);
 
         // Getting a reference to Close button, and close the popup when clicked.
         Button close = (Button) layout.findViewById(R.id.cancel);
@@ -169,3 +184,4 @@ public class AttendanceEnquiry extends Fragment {
         });
     }
 }
+

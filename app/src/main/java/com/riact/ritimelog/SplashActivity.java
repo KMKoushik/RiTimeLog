@@ -1,16 +1,19 @@
 package com.riact.ritimelog;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.hyttetech.library.utils.AppSingleton;
 import com.hyttetech.library.utils.NetworkUtil;
@@ -20,6 +23,10 @@ import com.riact.ritimelog.utils.ModelUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+
+import java.util.List;
+
+import static com.android.volley.VolleyLog.TAG;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -64,14 +71,24 @@ public class SplashActivity extends AppCompatActivity {
             String string = db.getSiteDetails();
             if(null!=string)
             {
+                List item = db.getCurrentSite();
                 try {
                     Constants.siteList = ModelUtil.getSiteList(new JSONArray(db.getSiteDetails()));
-                    Intent i = new Intent(SplashActivity.this, MainActivity.class);
-                    startActivity(i);
-                    finish();
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                if(!item.isEmpty())
+                {
+                    Constants.currentSite=ModelUtil.getSite(item.get(0).toString());
+                    volleyEmployeeRequst(Constants.WEB_ADDRESS+"get_site_emp.php?site_code="+item.get(0).toString(),item.get(0).toString());
                 }
+                else {
+
+                        Intent i = new Intent(SplashActivity.this, MainActivity.class);
+                        startActivity(i);
+                        finish();
+
+                }
+                } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
             }
 
@@ -95,9 +112,16 @@ public class SplashActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Intent i = new Intent(SplashActivity.this, MainActivity.class);
-                startActivity(i);
-                finish();
+                List item = db.getCurrentSite();
+                    if(!item.isEmpty())
+                    {
+                        Constants.currentSite=ModelUtil.getSite(item.get(0).toString());
+                        volleyEmployeeRequst(Constants.WEB_ADDRESS+"get_site_emp.php?site_code="+item.get(0).toString(),item.get(0).toString());
+                    }
+                    else {
+                        Intent i = new Intent(SplashActivity.this, MainActivity.class);
+                        startActivity(i);
+                    }
 
             }
         }, new Response.ErrorListener() {
@@ -146,5 +170,60 @@ public class SplashActivity extends AppCompatActivity {
             // other 'case' lines to check for other
             // permissions this app might request
         }
+    }
+
+    public void  volleyEmployeeRequst(String url, final String siteCodeTxt){
+        String  REQUEST_TAG = "com.androidtutorialpoint.volleyStringRequest";
+
+
+        StringRequest strReq = new StringRequest(url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, response.toString());
+
+                try {
+                    Constants.employeeList=ModelUtil.getEmployeeList(new JSONArray(response));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                db.addEmployeeDetails(siteCodeTxt,response);
+                db.deleteCurrentSite();
+                db.addCurrentSite(siteCodeTxt);
+                Constants.currentSite=ModelUtil.getSite(db.getCurrentSite().get(0).toString());
+                Intent intent = new Intent(getApplicationContext(), MenuActivity.class);
+                startActivity(intent);
+                finish();
+
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                List<String> employeeData=db.getEmployeeDtails(siteCodeTxt);
+                if(!employeeData.isEmpty())
+                {
+                    try {
+                        Constants.employeeList=ModelUtil.getEmployeeList(new JSONArray(employeeData.get(0)));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Intent intent = new Intent(getApplicationContext(), MenuActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "No Internet Available", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+
+
+            }
+        });
+        // Adding String request to request queue
+        AppSingleton.getInstance(getApplicationContext()).addToRequestQueue(strReq, REQUEST_TAG);
+
     }
 }
