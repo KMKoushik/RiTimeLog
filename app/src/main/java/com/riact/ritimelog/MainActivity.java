@@ -23,6 +23,7 @@ import com.hyttetech.library.utils.AppSingleton;
 import com.riact.ritimelog.models.SiteModel;
 import com.riact.ritimelog.utils.Constants;
 import com.riact.ritimelog.utils.DbHandler;
+import com.riact.ritimelog.utils.GPSTracker;
 import com.riact.ritimelog.utils.ModelUtil;
 
 import org.json.JSONArray;
@@ -42,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     Button submitBtn ;
     String siteCodeTxt,OECodeTxt,OEPasswordTxt,pinCodeTxt;
     DbHandler db;
+    GPSTracker gps;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +95,27 @@ public class MainActivity extends AppCompatActivity {
 
                         if(ModelUtil.isValidSite(siteCodeTxt,pincodeLng,OECodeTxt,OEPasswordTxt))
                         {
-                            volleyStringRequst(Constants.WEB_ADDRESS+"get_site_emp.php?site_code="+siteCodeTxt,siteCodeTxt);
+                            gps = new GPSTracker(MainActivity.this);
+                            if (gps.canGetLocation()) {
+                                SiteModel model = ModelUtil.getSite(siteCodeTxt);
+                                double deviceLatitude = gps.getLatitude();
+                                double deviceLongitude = gps.getLongitude();
+                                double siteLatitude = model.getSiteLatitude();
+                                double siteLongitude = model.getSiteLongitude();
+                                double tollerance = model.getTollerance();
+                                AttendanceRegister register = new AttendanceRegister();
+
+                                if (register.distance(siteLatitude, siteLongitude, deviceLatitude, deviceLongitude) < tollerance ) {
+                                    volleyStringRequst(Constants.WEB_ADDRESS+"get_site_emp.php?site_code="+siteCodeTxt,siteCodeTxt);
+                                }
+                                else {
+                                    Toast.makeText(getApplicationContext(),"Invalid Location",Toast.LENGTH_SHORT).show();
+                                }
+
+                            } else {
+                                gps.showSettingsAlert();
+                            }
+
                         }
                         else {
                             Toast.makeText(getApplicationContext(),"Invalid Credentials",Toast.LENGTH_LONG).show();

@@ -1,6 +1,7 @@
 package com.riact.ritimelog.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,7 +64,12 @@ public class EmployeeAttendanceAdapter  extends ArrayAdapter<EmployeeModel> {
             viewHolder = new EmployeeAttendanceAdapter.ViewHolder();
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.attendance_grid_item_layout, parent, false);
-            viewHolder.linearLayout = (LinearLayout) convertView.findViewById(R.id.carview);
+
+            if(position%2==0)
+                convertView.setBackgroundColor(Color.parseColor("#cccccc"));
+            else
+                convertView.setBackgroundColor(Color.parseColor("#ffffff"));
+
 
 
 

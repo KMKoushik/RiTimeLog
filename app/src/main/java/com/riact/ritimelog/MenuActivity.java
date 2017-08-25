@@ -31,6 +31,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.hyttetech.library.utils.AppSingleton;
+import com.hyttetech.library.utils.DialogUtil;
 import com.hyttetech.library.utils.NetworkUtil;
 import com.riact.ritimelog.utils.Constants;
 import com.riact.ritimelog.utils.DbHandler;
@@ -275,33 +276,39 @@ public class MenuActivity extends AppCompatActivity
 
     public void logOut(){
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle("Warning");
-        alert.setMessage("All saved data will be deleted. Do you want to Logout?");
-        alert.setPositiveButton("OK", new DialogInterface.OnClickListener()
-        {
+        toSyncList = db.getAllToSyncData();
 
-            @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
-                db.deleteCurrentSite();
-                db.deleteSyncedEmpDetails();
-                db.deleteToSyncedEmpDetails();
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-        alert.setNegativeButton("Cancel",new DialogInterface.OnClickListener()
-        {
+        ArrayList<String> empList = (ArrayList<String>) toSyncList.get(0);
+        int length = empList.size();
+        if(length==0) {
+            alert.setTitle("Warning");
+            alert.setMessage("All saved data will be deleted. Do you want to Logout?");
+            alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
-            @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    db.deleteCurrentSite();
+                    db.deleteSyncedEmpDetails();
+                    db.deleteToSyncedEmpDetails();
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            });
+            alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 
-            }
-        });
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
 
-        alert.show();
+                }
+            });
+
+            alert.show();
+        }
+        else {
+
+            DialogUtil.showToast("You have to sync the data before you Logout",Toast.LENGTH_LONG,getApplicationContext());
+        }
     }
 
     public void syncData()

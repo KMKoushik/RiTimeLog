@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:layout_weight="1"
+    android:background="@color/background"
+    tools:context="com.riact.ritimelog.MainActivity"
+    android:fillViewport="true">
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -99,14 +108,14 @@
 
         <Button
             android:id="@+id/search_btn"
-            android:layout_width="match_parent"
+            android:layout_width="200dp"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_marginTop="10dp"
             android:text="search"
             android:textColor="#ffffff"
-            android:background="@drawable/roundedbutton"
+            android:background="@drawable/riactroundedbtn"
             />
 
         <!--<ListView-->
@@ -117,15 +126,43 @@
         <!--android:layout_marginRight="5dp"-->
         <!--android:layout_marginTop="10dp"-->
         <!--android:divider="@null" />-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".2"
+                android:text="Emp ID"
+                android:textAlignment="center"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".3"
+                android:text="Name"
+                android:textAlignment="center"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".25"
+                android:text="Date"
+                android:textAlignment="center"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".25"
+                android:text="Time"
+                android:textAlignment="center"/>
+        </LinearLayout>
         <GridView
             android:id="@+id/enquiry_grid"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:columnWidth="150dp"
+            android:layout_height="match_parent"
             android:gravity="center"
-            android:numColumns="auto_fit"
             android:stretchMode="columnWidth" />
         <!---->
 
     </android.support.v7.widget.LinearLayoutCompat>
     </RelativeLayout>
+</ScrollView>

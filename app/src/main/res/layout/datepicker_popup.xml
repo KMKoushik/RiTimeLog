@@ -42,7 +42,7 @@
 
             android:layout_alignParentStart="true"
             android:layout_alignTop="@+id/set"
-            android:background="@drawable/roundedbutton"
+            android:background="@drawable/riactroundedbtn"
             android:text="cancel"
             android:textColor="#ffffff" />
 
@@ -55,7 +55,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="20dp"
 
-            android:background="@drawable/roundedbutton"
+            android:background="@drawable/riactroundedbtn"
             android:text="set"
             android:textColor="#ffffff" />
     </RelativeLayout>
